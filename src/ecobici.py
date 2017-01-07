@@ -9,22 +9,29 @@ from util import fix_ms
 from sklearn import metrics
 from sklearn.cluster import KMeans
 
-TEST_SIZE = 100000000000000
+TEST_SIZE = 1000
 
 dt_fmt_12 = '%d/%m/%Y %I:%M:%S %p'
 dt_fmt_11 = '%Y-%m-%d %H:%M:%S'
 dt_fmt_09 = '%d/%m/%Y %H:%M:%S'
 
+STATIONDEMAND_TITLE = 'Entrada y salida de bicicletas'
+STATIONDEMAND_PATH = '../plots/demanda_estaciones.png'
+
 BIKEDEMAND_TITLE = 'Demanda de bicicletas por periodos de 30 minutos'
-BIKEDEMAND_PATH = '../plots/demanda_%s.png'
+BIKEDEMAND_PATH = '../plots/demanda_bicis.png'
 
 TIMESERIES_PATH_FMT = '../plots/estacion_%s.png'
-TIMESERIES_TITLE = 'Uso de la estación de Octube a Diciembre de 2016'
+TIMESERIES_TITLE = 'Uso de la estacion de Octube a Diciembre de 2016'
 TIMESERIES_MIN_POINTS = 20
 
 HEATMAP_TITLE = 'Matriz de origen-destino para el sistema Ecobici ' +\
         'de Octubre a Diciembre de 2016'
 HEATMAP_PATH = '../plots/heatmap.png'
+
+KMEANS_ELBOW_PLOT_PATH ='../plots/kmeans-elbow.png'
+
+colors = {0:'#FF0000', 1:'#00FF00', 2:'#0000FF', 3:'#FFFD00'}
 
 def loadFile(path, fmt, hasheader=True, delimiter=','):
     csvfile = open(path, 'r')
@@ -76,6 +83,7 @@ def q1_stats(df):
     # Promedio de uso:
     df['delta'] = df['end_dt'] - df['start_dt']
     print "Promedio de uso: ", df['delta'].mean()
+    
     # Horarios de mayor afluencia en intervalos de 30 min
     table = df[['start_dt']].groupby([
         df['start_dt'].map(lambda x: x.hour).rename('hour'),
@@ -87,6 +95,7 @@ def q1_stats(df):
         m = row['minute']
         c = row['start_dt']
         histogram[2*h + m] = c
+    
     # Estaciones de mayor uso
     table = df['start_st'].groupby(df['start_st']).agg(['count']).sort_values(
             by=['count'], ascending=False).reset_index()
@@ -156,8 +165,38 @@ def build_station2id_map(df):
             counter += 1
     return stations_map
 
-def question4(df):
-    print df
+def q4_stations_model(df):
+    outs = df['start_st'].groupby(df['start_st']).agg(['count']).reset_index(
+            ).rename(columns={'start_st':'st'})
+    ins = df['end_st'].groupby(df['end_st']).agg(['count']).reset_index(
+            ).rename(columns={'end_st':'st'})
+    table = pandas.merge(ins, outs, how='outer', on='st').fillna(0)
+    
+    # Create direct and invert index for stations
+    station2id = build_station2id_map(df)
+    id2station = {v:k for k,v in station2id.items()}
+    n_stations = len(station2id)
+    
+    # Build st,ins,outs matrix
+    m = numpy.zeros((n_stations, 2))
+    for index, row in table.iterrows():
+        idx = station2id[row['st']]
+        ins = row['count_x']
+        outs = row['count_y']
+        m[idx][0] = ins
+        m[idx][1] = outs
+
+    # Apply k-means, eval several ks
+    ks = range(1,20)
+    inertias = []
+    for k in ks:
+        model = KMeans(n_clusters=k, random_state=33).fit(m)
+        inertias.append(model.inertia_)
+    inertias = zip(ks, inertias)
+
+    labels = KMeans(n_clusters=4, random_state=33).fit_predict(m)
+
+    return  m, id2station, inertias, labels
 
 def plot_src_dst_matrix(matrix, labels, path):
     """Create source-destination plot, use labels for ticks"""
@@ -193,14 +232,45 @@ def plot_bike_demand(histogram, path):
     plt.savefig(path, format="png")
     plt.close()
 
+def plot_station_demand(matrix, id2station, path, labels=None):
+    """Plot station in and out demand"""
+    plt.figure(1, figsize=(30, 30))
+    plt.title(STATIONDEMAND_TITLE)
+    plt.xlabel('Numero de entradas')
+    plt.ylabel('Numero de salidas')
+    for i, row in enumerate(matrix):
+        x = row[0]
+        y = row[1]
+        if len(labels):
+            plt.scatter(x, y, color=colors[labels[i]], s=50)
+        else:
+            plt.scatter(x, y, s=50)
+        plt.annotate("%s" % id2station[i], (x, y))
+    plt.axis('equal')
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.savefig(path, format="png")
+    plt.close()
+
+def plot_kmeans_elbow(inertias, path):
+    """Plot elbow plot to choose number of cluster for k means"""
+    plt.figure(1, figsize=(30, 20))
+    plt.title("k vs loss")
+    plt.xlabel('k')
+    plt.ylabel('loss')
+    x = [a for a,b in inertias]
+    y = [b for a,b in inertias]
+    plt.plot(x,y)
+    plt.savefig(path, format="png")
+    plt.close()
+
 if __name__ == "__main__":
 
     df = loadAll()
 
     # Question 1. Horarios y estaciones con mas demanda
-    hist, top_st = q1_stats(df)
-    plot_bike_demand(hist)
-    print "Estaciones con mas demanda: ", top_st
+    #hist, top_st = q1_stats(df)
+    #plot_bike_demand(hist)
+    #print "Estaciones con mas demanda: ", top_st
 
     # Question 2. Tendencia de uso
     #ts, slopes, predictions = q2_temporal_analysis(df)
@@ -221,4 +291,9 @@ if __name__ == "__main__":
     #matrix, id2station = q3_build_src_dst_matrix(df)
     #labels = [id2station[k] for k in sorted(id2station)]
     #plot_src_dst_matrix(matrix, labels, HEATMAP_PATH)
+
+    # Question 4. Grouping stations based on usage
+    table_in_out, id2station, inertias, labels = q4_stations_model(df)
+    plot_kmeans_elbow(inertias, KMEANS_ELBOW_PLOT_PATH)
+    plot_station_demand(table_in_out, id2station, STATIONDEMAND_PATH, labels)
 
