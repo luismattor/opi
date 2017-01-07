@@ -92,4 +92,5 @@ ENV/
 /data
 /res
 project.vim
+*.swp
 
