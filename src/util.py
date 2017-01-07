@@ -14,3 +14,14 @@ def tofloat(s):
         #print 'Error when parsing %s' % s
         o = None
     return o
+
+def fix_hour_padding(s):
+    if s.index(':') == 1:
+        s = '0' + s
+    return s
+
+def fix_ms(s):
+    if '.' in s:
+        index = s.index('.')
+        s = s[:index]
+    return s
