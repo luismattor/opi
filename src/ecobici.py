@@ -6,8 +6,10 @@ import statsmodels.api as sm
 
 from datetime import datetime
 from util import fix_ms
+from sklearn import metrics
+from sklearn.cluster import KMeans
 
-TEST_SIZE = 10000000
+TEST_SIZE = 100000000
 
 dt_fmt_12 = '%d/%m/%Y %I:%M:%S %p'
 dt_fmt_11 = '%Y-%m-%d %H:%M:%S'
@@ -120,12 +122,56 @@ def plotSeries(days, serie, fit, path):
     plt.savefig(path, format="png")
     plt.close()
 
+def question3(df):
+    # Group by start and end
+    table = df[['start_st']].groupby([df['start_st'],
+        df['end_st']]).agg('count').add_suffix('_count').rename(
+                columns={'start_st_count': 'count'}).reset_index()
+   
+    station2id = build_stations_map(df)
+    id2station = {v:k for k,v in station2id.items()}
+    labels = [id2station[k] for k in sorted(id2station)]
+    n_stations = len(station2id)
+
+    m = numpy.zeros((n_stations, n_stations))
+    for index, row in table.iterrows():
+        start = station2id[row['start_st']]
+        end = station2id[row['end_st']]
+        count = row['count']
+        m[start][end] = count
+
+    print m
+
+    fig, ax = plt.subplots(figsize=(45, 30))
+    #plt.xticks(range(n_stations), labels)
+    ax.set_ylabel('uso')
+    plt.imshow(m, cmap=plt.get_cmap('hot'), vmin=0, vmax=1)
+    plt.savefig('../plots/heatmap.png', format="png")
+    plt.close()
+
+def build_stations_map(df):
+    all_starts = df['start_st'].unique().tolist()
+    all_ends = df['end_st'].unique().tolist()
+
+    stations_map = {}
+    counter = 0
+    for station in all_starts + all_ends:
+        if station not in stations_map:
+            stations_map[station] = counter
+            counter += 1
+
+    return stations_map
+
 if __name__ == "__main__":
 
     df = loadAll()
 
+    print len(df['start_st'].unique().tolist())
+    print len(df['end_st'].unique().tolist())
+
     #question1(df)
-    question2(df)
+    #question2(df)
+    question3(df)
 
     print df[0:10]
 
