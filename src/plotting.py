@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 
+from staticmap import StaticMap, CircleMarker
+
 HEATMAP_TITLE = 'Matriz de origen-destino para el sistema Ecobici ' +\
         'de Octubre a Diciembre de 2016'
 
@@ -20,6 +22,7 @@ def plot_src_dst_matrix(matrix, labels, path):
     plt.yticks(range(n_stations), labels)
     plt.imshow(matrix, interpolation='none')
     plt.colorbar()
+    plt.grid(True, which='minor')
     plt.savefig(path, format="png")
     plt.close()
 
@@ -76,3 +79,25 @@ def plot_kmeans_elbow(inertias, path):
     plt.savefig(path, format="png")
     plt.close()
 
+def plot_route(route, station2loc, path):
+    """Draw map with a start and end marker"""
+    m = StaticMap(400, 400)
+    start = station2loc[route[0]]
+    end = station2loc[route[1]]
+    marker1 = CircleMarker((start[1], start[0]), '#00FF00', 12)
+    marker2 = CircleMarker((end[1], end[0]), '#FF0000', 12)
+    m.add_marker(marker1)
+    m.add_marker(marker2)
+    image = m.render(zoom=15)
+    image.save(path)
+
+def plot_stations(stations, station2loc, path):
+    """Draw map with a start and end marker"""
+    m = StaticMap(800, 800)
+    for station in stations:
+        lat = station2loc[station][0]
+        lon = station2loc[station][1]
+        marker = CircleMarker((lon, lat), '#0000FF', 12)
+        m.add_marker(marker)
+    image = m.render(zoom=15)
+    image.save(path)

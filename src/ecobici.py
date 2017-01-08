@@ -1,4 +1,5 @@
 import csv
+import json
 import numpy
 import pandas
 import statsmodels.api as sm
@@ -12,8 +13,9 @@ from plotting import plot_series
 from plotting import plot_src_dst_matrix
 from plotting import plot_kmeans_elbow
 from plotting import plot_station_demand 
+from plotting import plot_route
 
-TEST_SIZE = 100000000
+TEST_SIZE = 1000
 
 dt_fmt_12 = '%d/%m/%Y %I:%M:%S %p'
 dt_fmt_11 = '%Y-%m-%d %H:%M:%S'
@@ -28,6 +30,12 @@ HEATMAP_PATH = '../plots/heatmap.png'
 KMEANS_ELBOW_PLOT_PATH ='../plots/kmeans-elbow.png'
 
 STATIONDEMAND_PATH = '../plots/demanda_estaciones.png'
+
+STATIONS_JSON_PATH = '../data/estaciones.json'
+
+ROUTES_PATH_FMT = '../plots/route_%s_%s.png'
+
+HIGHEST_DEMAND_PATH = '../plots/estaciones.png'
 
 TIMESERIES_MIN_POINTS = 20
 
@@ -196,8 +204,27 @@ def q4_stations_model(df):
 
     return  m, id2station, inertias, labels
 
-def q5_explain_stations(df):
-    print df
+def q5_explain_stations(matrix, id2station):
+    # Build station-location map
+    jsonfile = open(STATIONS_JSON_PATH, 'r')
+    stations = json.load(jsonfile)['stations']
+    station2loc = {}
+    for station in stations:
+        name = str(station['id'])
+        lat = station['location']['lat']
+        lon = station['location']['lon']
+        station2loc[name] = (lat, lon)
+
+    # Pick 3 routes with highest demand
+    n = matrix.shape[0]
+    routes_ = []
+    for i in range(n):
+        for j in range(n):
+           routes_.append((i,j,matrix[i,j]))
+    routes_.sort(key=lambda tup: tup[2], reverse=True)
+    routes = [(id2station[r[0]], id2station[r[1]], r[2]) for r in routes_[0:3]]
+
+    return routes, station2loc
 
 if __name__ == "__main__":
 
@@ -220,7 +247,7 @@ if __name__ == "__main__":
     #up_slopes = [(rev_slopes[k], k) for k in sorted(rev_slopes)[-10:]]
     #for s in sorted(rev_slopes):
     #    print 'Slope: %f, Station: %s' % (s, rev_slopes[s])
-    #print up_slopes
+    #print upslopes
     #print down_slopes
 
     # Question 3. Matriz origen-destino
@@ -234,4 +261,10 @@ if __name__ == "__main__":
     #plot_station_demand(table_in_out, id2station, STATIONDEMAND_PATH, labels)
 
     # Question 5. Para algunas estaciones, explicar comportamiento
-    res = q5_explain_stations(df)
+    routes, station2loc = q5_explain_stations(matrix, id2station)
+    for route in routes:
+        path = ROUTES_PATH_FMT % (route[0], route[1])
+        plot_route(route, station2loc, path)
+    demanded = [id2station[idx] for idx in numpy.where(labels==3)[0]]
+    plot_stations(demanded, station2loc, HIGHEST_DEMAND_PATH)
+
