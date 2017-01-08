@@ -6,7 +6,7 @@
 
 Agregando el numero de veces que los usuarios utilizaron ecobicis en periodos de tiempo de 30 minutos se obtuvo la siguiente gráfica:
 
-![Demanda de bicicletas](https://www.dropbox.com/s/pgmis7r1jpoyokj/demanda_bicis.png?dl=0)
+[Demanda Bicicletas](https://www.dropbox.com/s/pgmis7r1jpoyokj/demanda_bicis.png?dl=0)
 
 La distribución cuenta con tres medias ubicadas en los intervalos 08:00-09:00, 14:00-15:00 y 18:00-19:00. La demanda de bicicletas es mayor en estos horarios puesto que se trata de las horas en las que las personas entran a trabajar/estudiar, salen a comer y regresan del trabajo/escuela.
 
