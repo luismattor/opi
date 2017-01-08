@@ -14,6 +14,7 @@ from plotting import plot_src_dst_matrix
 from plotting import plot_kmeans_elbow
 from plotting import plot_station_demand 
 from plotting import plot_route
+from plotting import plot_stations
 
 dt_fmt_12 = '%d/%m/%Y %I:%M:%S %p'
 dt_fmt_11 = '%Y-%m-%d %H:%M:%S'
@@ -253,7 +254,7 @@ if __name__ == "__main__":
     plot_kmeans_elbow(inertias, KMEANS_ELBOW_PLOT_PATH)
     plot_station_demand(table_in_out, id2station, STATIONDEMAND_PATH, labels)
 
-    # Question 5. Para algunas estaciones, explicar comportamiento
+    # Question 5. Atributos geográficos, Nota: Checar label grupo demandado
     routes, station2loc = q5_explain_stations(matrix, id2station)
     for route in routes:
         path = ROUTES_PATH_FMT % (route[0], route[1])
