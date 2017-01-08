@@ -50,4 +50,40 @@ Si. Una opción sería clasificarlas en tendencia creciente, tendencia 'estable'
 
 Dicha categorización sería muy útil a la hora de distribuir bicicletas a las estaciones. Por ejemplo, mandar mas bicicletas a las estaciones con tendencia a la alta, quitarlas de las estaciones con tendencia a la baja.
 
+## 3. Matriz de entradas-salidas
 
+La matriz esta disponible en el siguiente link:
+
+[Matriz entradas-salidas](https://www.dropbox.com/s/kajimzstszctxhu/heatmap.png?dl=0)
+
+Las tres rutas mas concurridas fueron:
+
+Ruta | Ocasiones
+--- | ---
+
+## 4. Perfiles de uso
+
+Los resultados del proceso de clusterización estan disponibles en el siguiente enlace:
+
+[Modelo perfil estaciones](https://www.dropbox.com/s/h7587uma8hzlyrb/demanda_estaciones.png?dl=0)
+
+Nuestro proceso identificó los siguientes cuatro grupos:
+* Grupo rojo. Estaciones menos demandadas. Representan el 52% del total.
+* Grupo verde. Estaciones con nivel de demanda regular. Representan el 33% del total.
+* Grupo amarillo. Estaciones con alta demanda. Representan el 14% del total.
+* Grupo azul. Estaciones de movilidad crítica.
+
+Los resultados anteriores concuerdan con lo observado en la matriz de entradas-salidas, en donde la mayoría de las rutas estan dentro del promedio azul
+mientras que una cantidad mucho menor se encuentra dentro del promedio azul-claro. Finalmente, si observamos detalladamente, es posible encontrar algunos puntos en amarillo o rojo.
+
+Otra tendencia que es posible observar en la matriz es que los usuarios utilizan la bici para paseos redondos. Sería bueno investigar a que se debe esto. Algunas hipotesis incluye salidas a comer o cancelación de la ruta.
+
+Finalmente, sería bueno llevar a cabo un análisis geoespacial de los grupos. Como primer aproximación, esperariamos que las estaciones del grupo verde, amarillo y azul esten ubicadas en áreas de oficina y escuelas.
+
+Para nuestro modelo de "perfiles de uso", caracterizamos cada estación con su número total de entradas y salidas, posteriormente utilizamos k-means. Dado que ambos features tienen las mismas dimensiones decidimos no utilizar ningún método de normalización o escalado de datos.
+
+Para identificar el número apropiado de perfiles de uso (k en k-means) utilizamos el metodo 'elbow' de manera visual. El gráfico generado esta disponible en:
+
+[Elbow plot](https://www.dropbox.com/s/x8jf9zlspnwtvz0/kmeans-elbow.png?dl=0)
+
+K-means nos pareció buena elección puesto que se trata de un módelo sencillo de clusterización que ofrece grupos excluyentes.
