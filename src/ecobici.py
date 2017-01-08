@@ -1,37 +1,35 @@
 import csv
 import numpy
 import pandas
-import matplotlib.pyplot as plt
 import statsmodels.api as sm
 
 from datetime import datetime
 from util import fix_ms
 from sklearn import metrics
 from sklearn.cluster import KMeans
+from plotting import plot_bike_demand
+from plotting import plot_series
+from plotting import plot_src_dst_matrix
+from plotting import plot_kmeans_elbow
+from plotting import plot_station_demand 
 
-TEST_SIZE = 1000
+TEST_SIZE = 100000000
 
 dt_fmt_12 = '%d/%m/%Y %I:%M:%S %p'
 dt_fmt_11 = '%Y-%m-%d %H:%M:%S'
 dt_fmt_09 = '%d/%m/%Y %H:%M:%S'
 
-STATIONDEMAND_TITLE = 'Entrada y salida de bicicletas'
-STATIONDEMAND_PATH = '../plots/demanda_estaciones.png'
-
-BIKEDEMAND_TITLE = 'Demanda de bicicletas por periodos de 30 minutos'
 BIKEDEMAND_PATH = '../plots/demanda_bicis.png'
 
 TIMESERIES_PATH_FMT = '../plots/estacion_%s.png'
-TIMESERIES_TITLE = 'Uso de la estacion de Octube a Diciembre de 2016'
-TIMESERIES_MIN_POINTS = 20
 
-HEATMAP_TITLE = 'Matriz de origen-destino para el sistema Ecobici ' +\
-        'de Octubre a Diciembre de 2016'
 HEATMAP_PATH = '../plots/heatmap.png'
 
 KMEANS_ELBOW_PLOT_PATH ='../plots/kmeans-elbow.png'
 
-colors = {0:'#FF0000', 1:'#00FF00', 2:'#0000FF', 3:'#FFFD00'}
+STATIONDEMAND_PATH = '../plots/demanda_estaciones.png'
+
+TIMESERIES_MIN_POINTS = 20
 
 def loadFile(path, fmt, hasheader=True, delimiter=','):
     csvfile = open(path, 'r')
@@ -198,70 +196,8 @@ def q4_stations_model(df):
 
     return  m, id2station, inertias, labels
 
-def plot_src_dst_matrix(matrix, labels, path):
-    """Create source-destination plot, use labels for ticks"""
-    n_stations = len(labels)
-    plt.figure(1, figsize=(120, 80))
-    plt.title(HEATMAP_TITLE)
-    plt.xticks(range(n_stations), labels, rotation='vertical')
-    plt.yticks(range(n_stations), labels)
-    plt.imshow(matrix, interpolation='none')
-    plt.colorbar()
-    plt.savefig(path, format="png")
-    plt.close()
-
-def plot_series(days, serie, fit, path):
-    """Plot time serie and its linear fit"""
-    plt.figure(1, figsize=(15, 10))
-    plt.title(TIMESERIES_TITLE)
-    plt.xlabel('dias')
-    plt.ylabel('uso')
-    plt.plot(days, serie, days, fit)
-    plt.savefig(path, format="png")
-    plt.close()
-
-def plot_bike_demand(histogram, path):
-    """Plot bike demand in periods fo 30 min"""
-    labels = ['%02d:%02d' % (int(t / 2), 30 * int(t % 2)) for t in range(48)]
-    plt.figure(1, figsize=(30, 20))
-    plt.title(BIKEDEMAND_TITLE)
-    plt.xticks(range(48), labels, rotation='vertical')
-    plt.xlabel('tiempo')
-    plt.ylabel('demanda')
-    plt.plot(histogram)
-    plt.savefig(path, format="png")
-    plt.close()
-
-def plot_station_demand(matrix, id2station, path, labels=None):
-    """Plot station in and out demand"""
-    plt.figure(1, figsize=(30, 30))
-    plt.title(STATIONDEMAND_TITLE)
-    plt.xlabel('Numero de entradas')
-    plt.ylabel('Numero de salidas')
-    for i, row in enumerate(matrix):
-        x = row[0]
-        y = row[1]
-        if len(labels):
-            plt.scatter(x, y, color=colors[labels[i]], s=50)
-        else:
-            plt.scatter(x, y, s=50)
-        plt.annotate("%s" % id2station[i], (x, y))
-    plt.axis('equal')
-    plt.gca().set_aspect('equal', adjustable='box')
-    plt.savefig(path, format="png")
-    plt.close()
-
-def plot_kmeans_elbow(inertias, path):
-    """Plot elbow plot to choose number of cluster for k means"""
-    plt.figure(1, figsize=(30, 20))
-    plt.title("k vs loss")
-    plt.xlabel('k')
-    plt.ylabel('loss')
-    x = [a for a,b in inertias]
-    y = [b for a,b in inertias]
-    plt.plot(x,y)
-    plt.savefig(path, format="png")
-    plt.close()
+def q5_explain_stations(df):
+    print df
 
 if __name__ == "__main__":
 
@@ -269,7 +205,7 @@ if __name__ == "__main__":
 
     # Question 1. Horarios y estaciones con mas demanda
     #hist, top_st = q1_stats(df)
-    #plot_bike_demand(hist)
+    #plot_bike_demand(hist, BIKEDEMAND_PATH)
     #print "Estaciones con mas demanda: ", top_st
 
     # Question 2. Tendencia de uso
@@ -293,7 +229,9 @@ if __name__ == "__main__":
     #plot_src_dst_matrix(matrix, labels, HEATMAP_PATH)
 
     # Question 4. Grouping stations based on usage
-    table_in_out, id2station, inertias, labels = q4_stations_model(df)
-    plot_kmeans_elbow(inertias, KMEANS_ELBOW_PLOT_PATH)
-    plot_station_demand(table_in_out, id2station, STATIONDEMAND_PATH, labels)
+    #table_in_out, id2station, inertias, labels = q4_stations_model(df)
+    #plot_kmeans_elbow(inertias, KMEANS_ELBOW_PLOT_PATH)
+    #plot_station_demand(table_in_out, id2station, STATIONDEMAND_PATH, labels)
 
+    # Question 5. Para algunas estaciones, explicar comportamiento
+    res = q5_explain_stations(df)
