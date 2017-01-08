@@ -24,7 +24,7 @@ El promedio de utilización de una bicicleta es de 14 minutos.
 
 En total se identificaron 452 estaciones de bicicleta en los datos.
 
-## 2. Tendencia de uso
+### 2. Tendencia de uso
 
 Nuestro análisis consistió en contruir y caracterizar las series de tiempo de utilización de bicicletas por cada una de las estaciones. Para caracterizar cada serie utilizamos una regresión lineal.
 
@@ -50,13 +50,13 @@ Si. Una opción sería clasificarlas en tendencia creciente, tendencia 'estable'
 
 Dicha categorización sería muy útil a la hora de distribuir bicicletas a las estaciones. Por ejemplo, mandar mas bicicletas a las estaciones con tendencia a la alta, quitarlas de las estaciones con tendencia a la baja.
 
-## 3. Matriz de entradas-salidas
+### 3. Matriz de origen-destino
 
 La matriz esta disponible en el siguiente link:
 
-[Matriz entradas-salidas](https://www.dropbox.com/s/kajimzstszctxhu/heatmap.png?dl=0)
+[Matriz origen destino](https://www.dropbox.com/s/kajimzstszctxhu/heatmap.png?dl=0)
 
-## 4. Perfiles de uso
+### 4. Perfiles de uso
 
 Los resultados del proceso de clusterización estan disponibles en el siguiente enlace:
 
@@ -68,7 +68,7 @@ Nuestro proceso identificó los siguientes cuatro grupos:
 * Grupo amarillo. Estaciones con alta demanda. Representan el 14% del total.
 * Grupo azul. Estaciones de movilidad crítica.
 
-Los resultados anteriores concuerdan con lo observado en la matriz de entradas-salidas, en donde la mayoría de las rutas estan dentro del promedio azul
+Los resultados anteriores concuerdan con lo observado en la matriz de origen-destino, en donde la mayoría de las rutas estan dentro del promedio azul
 mientras que una cantidad mucho menor se encuentra dentro del promedio azul-claro. Finalmente, si observamos detalladamente, es posible encontrar algunos puntos en amarillo o rojo.
 
 Otra tendencia que es posible observar en la matriz es que los usuarios utilizan la bici para paseos redondos. Sería bueno investigar a que se debe esto. Algunas hipotesis incluye salidas a comer o cancelación de la ruta.
@@ -81,9 +81,9 @@ Para identificar el número apropiado de perfiles de uso (k en k-means) utilizam
 
 K-means nos pareció buena elección puesto que se trata de un módelo sencillo de clusterización que ofrece grupos excluyentes.
 
-## 5. Atributos geográficos
+### 5. Atributos geográficos
 
-De la matriz de entradas-salidas, las tres rutas mas concurridas fueron:
+De la matriz de origen-destino, las tres rutas mas concurridas fueron:
 
 Ruta | Ocasiones | Ubicación geográfica 
 --- | --- | 
@@ -107,4 +107,20 @@ Los atributos geográficos para nuestro análisis de movivilidad del sistema Eco
 * Nos permite ubicar las estaciones en una zona geográfica.
 * Nos permite relacionar las estaciones con todas las demas entidades que comparten la misma ubicación geográfica i.e. estaciones de transporte, oficinas, escuelas, ...
 * Nos permitiría realizar analísis de estaciones por zonas geográficas.
+
+### 6. Notas
+
+Utilicé el archivo de ecobici de Septiembre en lugar del de Octubre. La razón fue que en el archivo de Octubre las horas de retiro de bicis parecían estar incorrectas.
+
+## Bebés
+
+
+
+El archivo con las estimaciones se encuentra en el siguiente enlace:
+
+[Estimaciones bebes 0 a meses](https://www.dropbox.com/s/dstpkuj6t3047zi/ageb.csv?dl=0)
+
+Fuentes de datos:
+
+[1](http://www.inegi.org.mx/sistemas/consulta_resultados/ageb_urb2010.aspx?c=28111&s=est)
 
