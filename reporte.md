@@ -38,9 +38,9 @@ Estaciones | Pendiente
 
 Las graficas estan disponibles en los siguientes enlaces:
 
-[Estación 61](https://www.dropbox.com/s/ew4evrw8ubl7cyz/estacion_61.png?dl=0)
-[Estación 69](https://www.dropbox.com/s/re7bu2d87lren8g/estacion_69.png?dl=0)
-[Estación 54](https://www.dropbox.com/s/7w0db94uitbo8ya/estacion_54.png?dl=0)
+* [Estación 61](https://www.dropbox.com/s/ew4evrw8ubl7cyz/estacion_61.png?dl=0)
+* [Estación 69](https://www.dropbox.com/s/re7bu2d87lren8g/estacion_69.png?dl=0)
+* [Estación 54](https://www.dropbox.com/s/7w0db94uitbo8ya/estacion_54.png?dl=0)
 
 Al analizar las gráficas observamos que la tendencia global a lo largo de los tres meses es a la alta, sin embargo, es posible observar que, para todos los casos, la serie cae drásticamente en los últimos días del mes de Diciembre. Este comportamiento es explicado por el hecho de que dichos días empatan con los periodos vacacionales de muchas personas; periodos en donde la movilidad en la ciudad disminuye drásticamente.
 
@@ -55,11 +55,6 @@ Dicha categorización sería muy útil a la hora de distribuir bicicletas a las 
 La matriz esta disponible en el siguiente link:
 
 [Matriz entradas-salidas](https://www.dropbox.com/s/kajimzstszctxhu/heatmap.png?dl=0)
-
-Las tres rutas mas concurridas fueron:
-
-Ruta | Ocasiones
---- | ---
 
 ## 4. Perfiles de uso
 
@@ -78,8 +73,6 @@ mientras que una cantidad mucho menor se encuentra dentro del promedio azul-clar
 
 Otra tendencia que es posible observar en la matriz es que los usuarios utilizan la bici para paseos redondos. Sería bueno investigar a que se debe esto. Algunas hipotesis incluye salidas a comer o cancelación de la ruta.
 
-Finalmente, sería bueno llevar a cabo un análisis geoespacial de los grupos. Como primer aproximación, esperariamos que las estaciones del grupo verde, amarillo y azul esten ubicadas en áreas de oficina y escuelas.
-
 Para nuestro modelo de "perfiles de uso", caracterizamos cada estación con su número total de entradas y salidas, posteriormente utilizamos k-means. Dado que ambos features tienen las mismas dimensiones decidimos no utilizar ningún método de normalización o escalado de datos.
 
 Para identificar el número apropiado de perfiles de uso (k en k-means) utilizamos el metodo 'elbow' de manera visual. El gráfico generado esta disponible en:
@@ -87,3 +80,31 @@ Para identificar el número apropiado de perfiles de uso (k en k-means) utilizam
 [Elbow plot](https://www.dropbox.com/s/x8jf9zlspnwtvz0/kmeans-elbow.png?dl=0)
 
 K-means nos pareció buena elección puesto que se trata de un módelo sencillo de clusterización que ofrece grupos excluyentes.
+
+## 5. Atributos geográficos
+
+De la matriz de entradas-salidas, las tres rutas mas concurridas fueron:
+
+Ruta | Ocasiones | Ubicación geográfica 
+--- | --- | 
+211-217 | 1727 | Polanco
+18-1 | 1368 | Cuauhtemoc-Reforma
+183-174 | 1118 | San Rafael
+
+Los mapas con la ubicación de las rutas estan disponibles en:
+* [211-217](https://www.dropbox.com/s/6xm4o1ki9xarvl5/route_211_217.png?dl=0)
+* [18-1](https://www.dropbox.com/s/sr7v8q8c3suz9n1/route_18_1.png?dl=0)
+* [183-174](https://www.dropbox.com/s/nofho6r3uvh2jwc/route_183_174.png?dl=0)
+
+Adicionalmente, hemos creado un mapa con las ubicaciones del grupo azul (estaciones con el mayor uso):
+
+[Estaciones mayor demanda](https://www.dropbox.com/s/2y8vwd4j6trm75z/estaciones.png?dl=0)
+
+Las imagenes anteriores corroboran el comportamiento de las relaciones encontradas en las preguntas pasadas. Es posible observar que las rutas y estaciones con mayor demanda estan ubicadas en puntos a lo largo de reforma centro.
+También es posible observar que hay dos estaciones con mucha demanda en Buenavista lo cual podría explicarse por el hecho de que en ese punto convergen diversos sistemas de transporte masivo (metro, metrobus, tren suburvano).
+
+Los atributos geográficos para nuestro análisis de movivilidad del sistema Ecobici son esenciales por las siguientes razones:
+* Nos permite ubicar las estaciones en una zona geográfica.
+* Nos permite relacionar las estaciones con todas las demas entidades que comparten la misma ubicación geográfica i.e. estaciones de transporte, oficinas, escuelas, ...
+* Nos permitiría realizar analísis de estaciones por zonas geográficas.
+
