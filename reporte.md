@@ -75,7 +75,7 @@ Otra tendencia que es posible observar en la matriz es que los usuarios utilizan
 
 Para nuestro modelo de "perfiles de uso", caracterizamos cada estación con su número total de entradas y salidas, posteriormente utilizamos k-means. Dado que ambos features tienen las mismas dimensiones decidimos no utilizar ningún método de normalización o escalado de datos.
 
-Para identificar el número apropiado de perfiles de uso (k en k-means) utilizamos el metodo 'elbow' de manera visual. El gráfico generado esta disponible en:
+Para identificar el número apropiado de perfiles de uso (k en k-means) utilizamos el metodo 'elbow' de manera visual. La eleción del número de grupos fue establecida en 4. El gráfico generado esta disponible en:
 
 [Elbow plot](https://www.dropbox.com/s/x8jf9zlspnwtvz0/kmeans-elbow.png?dl=0)
 
@@ -86,7 +86,7 @@ K-means nos pareció buena elección puesto que se trata de un módelo sencillo 
 De la matriz de origen-destino, las tres rutas mas concurridas fueron:
 
 Ruta | Ocasiones | Ubicación geográfica 
---- | --- | 
+--- | --- | --- 
 211-217 | 1727 | Polanco
 18-1 | 1368 | Cuauhtemoc-Reforma
 183-174 | 1118 | San Rafael
