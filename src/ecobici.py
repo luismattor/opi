@@ -15,8 +15,6 @@ from plotting import plot_kmeans_elbow
 from plotting import plot_station_demand 
 from plotting import plot_route
 
-TEST_SIZE = 1000
-
 dt_fmt_12 = '%d/%m/%Y %I:%M:%S %p'
 dt_fmt_11 = '%Y-%m-%d %H:%M:%S'
 dt_fmt_09 = '%d/%m/%Y %H:%M:%S'
@@ -49,7 +47,6 @@ def loadFile(path, fmt, hasheader=True, delimiter=','):
         #    print i, h
 
     table = []
-    count = 0
     for record in records:
         genre = record[0].lower()
         age = int(record[1].lower())
@@ -65,9 +62,6 @@ def loadFile(path, fmt, hasheader=True, delimiter=','):
         end_time = fix_ms(record[8])
         end_dt = datetime.strptime(end_date + ' ' + end_time, fmt)
         table.append((genre, age, bike, start_st, start_dt, end_st, end_dt))
-        count += 1
-        if count == TEST_SIZE:
-            break
     return table
 
 def loadAll():
@@ -81,8 +75,7 @@ def loadAll():
     
     columns = ['genre', 'age', 'bike', 'start_st', 'start_dt',
             'end_st', 'end_dt']
-    # TODO CHANGE TO INCLUDE ALL LIST
-    df = pandas.DataFrame(t1, columns=columns)
+    df = pandas.DataFrame(t1 + t2 + t3, columns=columns)
     return df
 
 def q1_stats(df):
@@ -231,34 +224,34 @@ if __name__ == "__main__":
     df = loadAll()
 
     # Question 1. Horarios y estaciones con mas demanda
-    #hist, top_st = q1_stats(df)
-    #plot_bike_demand(hist, BIKEDEMAND_PATH)
-    #print "Estaciones con mas demanda: ", top_st
+    hist, top_st = q1_stats(df)
+    plot_bike_demand(hist, BIKEDEMAND_PATH)
+    print "Estaciones con mas demanda: ", top_st
 
     # Question 2. Tendencia de uso
-    #ts, slopes, predictions = q2_temporal_analysis(df)
-    #for k in ts:
-    #    path = TIMESERIES_PATH_FMT % k
-    #    pred = predictions[k]
-    #    serie = ts[k]
-    #    plot_series(range(len(serie)), serie, pred, path)
-    #rev_slopes = {v:k for k,v in slopes.items()}
-    #down_slopes = [(rev_slopes[k], k) for k in sorted(rev_slopes)[0:10]]
-    #up_slopes = [(rev_slopes[k], k) for k in sorted(rev_slopes)[-10:]]
-    #for s in sorted(rev_slopes):
-    #    print 'Slope: %f, Station: %s' % (s, rev_slopes[s])
-    #print upslopes
-    #print down_slopes
+    ts, slopes, predictions = q2_temporal_analysis(df)
+    for k in ts:
+        path = TIMESERIES_PATH_FMT % k
+        pred = predictions[k]
+        serie = ts[k]
+        plot_series(range(len(serie)), serie, pred, path)
+    rev_slopes = {v:k for k,v in slopes.items()}
+    down_slopes = [(rev_slopes[k], k) for k in sorted(rev_slopes)[0:10]]
+    up_slopes = [(rev_slopes[k], k) for k in sorted(rev_slopes)[-10:]]
+    for s in sorted(rev_slopes):
+        print 'Slope: %f, Station: %s' % (s, rev_slopes[s])
+    print upslopes
+    print down_slopes
 
     # Question 3. Matriz origen-destino
-    #matrix, id2station = q3_build_src_dst_matrix(df)
-    #labels = [id2station[k] for k in sorted(id2station)]
-    #plot_src_dst_matrix(matrix, labels, HEATMAP_PATH)
+    matrix, id2station = q3_build_src_dst_matrix(df)
+    labels = [id2station[k] for k in sorted(id2station)]
+    plot_src_dst_matrix(matrix, labels, HEATMAP_PATH)
 
     # Question 4. Grouping stations based on usage
-    #table_in_out, id2station, inertias, labels = q4_stations_model(df)
-    #plot_kmeans_elbow(inertias, KMEANS_ELBOW_PLOT_PATH)
-    #plot_station_demand(table_in_out, id2station, STATIONDEMAND_PATH, labels)
+    table_in_out, id2station, inertias, labels = q4_stations_model(df)
+    plot_kmeans_elbow(inertias, KMEANS_ELBOW_PLOT_PATH)
+    plot_station_demand(table_in_out, id2station, STATIONDEMAND_PATH, labels)
 
     # Question 5. Para algunas estaciones, explicar comportamiento
     routes, station2loc = q5_explain_stations(matrix, id2station)
