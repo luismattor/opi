@@ -114,13 +114,24 @@ Utilicé el archivo de ecobici de Septiembre en lugar del de Octubre. La razón 
 
 ## Bebés
 
+Para resolver la pregunta se utilizaron los resultados del censo del 2010 desagregados hasta el nivel de AGEB. A continuación enlistamos los datos relevantes para nuestras soluciones:
+
+* Totales por AGEB para la delegación Álvaro Obregón
+* Total de población de 0 a 2 años (los niños de 0 a 6 meses estan dentro de esta estadística)
+* Edades en diversos intervalos de la población femenil
+
+Nuetro primer modelo es muy simple: Estimar que la poblacion de niños de 0 a 6 meses en 2016 será igual que la población de niños de 0 a 6 meses en 2010.
+Si asumimos una distribución de edades uniforme sobre la población de 0 a 2 años en 2010, la estimación se calcula con una simple división. 
+Notese que no es posible hacer ninguna interpolacion/extrapolación puesto que no contamos con el mismo indicador en censos de otros años.
+
+Nuestro segundo modelo busca saber si la cantidad de niños de 0 a 6 meses en 2016 será mayor e menor que en el 2010. La idea es sencilla: contar el numero de madres potenciales en ambos años y determinar, mediante la diferencia, si habrá mas o menos niños. Nuevamente volvemos a asumir una distribución de edades uniforme sobre los intervalos de edades de la población femenil.
 
 
-El archivo con las estimaciones se encuentra en el siguiente enlace:
+El archivo con las estimaciones para ambos modelos se encuentra en el siguiente enlace:
 
-[Estimaciones bebes 0 a meses](https://www.dropbox.com/s/dstpkuj6t3047zi/ageb.csv?dl=0)
+[Estimaciones bebes 0 a 6 meses](https://www.dropbox.com/s/dstpkuj6t3047zi/ageb.csv?dl=0)
 
 Fuentes de datos:
 
-[1](http://www.inegi.org.mx/sistemas/consulta_resultados/ageb_urb2010.aspx?c=28111&s=est)
+[Censo 2010, resultados por AGEB](http://www.inegi.org.mx/sistemas/consulta_resultados/ageb_urb2010.aspx?c=28111&s=est)
 
